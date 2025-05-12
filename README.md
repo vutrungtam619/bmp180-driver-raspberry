@@ -36,21 +36,21 @@ i2cdetect -y 1
 
 - After that, check if you have downloaded linux-kernel-headers or raspberry-kernel-headers to import useful library in kernel space. You can check by cd to this path, if you see a folder name "build", this mean you have downloaded it.
 
-'''bash
+```bash
 cd /lib/modules/$(uname -r)
-'''
+```
 
 - In case you are not downloaded it, run these command. Try to reboot the os.
 
-'''bash
+```bash
 sudo apt update
 sudo apt upgrade
 sudo apt install raspberrypi-kernel-headers
-'''
+```
 
 - Git the code, after that create a Makefile in the same folder. Paste these code to it:
 
-'''bash
+```bash
 obj-m += bmp180.o
 
 all:
@@ -58,19 +58,19 @@ all:
 
 clean:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
-'''
+```
 
 - Run the command below to build the makefile:
 
-'''bash
+```bash
 make
-'''
+```
 
 - The following command use to load the bmp180 driver into linux kernel:
 
-'''bash
+```bash
 sudo insmod bmp180_driver.ko
 dmesg | tail
-'''
+```
 
 - After that, you can try to run it with your code
