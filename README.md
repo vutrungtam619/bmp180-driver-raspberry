@@ -4,6 +4,7 @@ This is driver support for module sensor BMP180 by BOSCH
 -   Vũ Trung Tâm (22146396)
 -   Nguyễn Đình Thao (22146400)
 -   Nguyễn Đoàn Anh Khoa (22146333)
+  
 # SENSOR BMP180
 - The BMP180 consists of a piezo-resistive sensor, an analog to digital converter and a control unit with E2PROM and a serial I2C interface. The BMP180 delivers the uncompensated value of pressure and temperature. The E2PROM has stored 176 bit of individual calibration data. This is used to compensate offset, temperature dependence and other parameters of the sensor.
 - Pin out:
@@ -26,5 +27,50 @@ This is driver support for module sensor BMP180 by BOSCH
 
 ![image](https://github.com/user-attachments/assets/e614deaf-bc08-4ae6-baf6-28c10925e72a)
 
+# SET UP ENVIRONMENT
+- The project using Raspberry pi 3 with Ubuntu version 22.04 and sensor BMP180. Before download the code, make sure that you have enable I2C in sudo raspi-config -> Interface Options. You can check if success by enter command below, if you see bmp180 address (0x77), you are successfully connect to it.
 
+'''bash
+i2cdetect -y 1
+'''
 
+- After that, check if you have downloaded linux-kernel-headers or raspberry-kernel-headers to import useful library in kernel space. You can check by cd to this path, if you see a folder name "build", this mean you have downloaded it.
+
+'''bash
+cd /lib/modules/$(uname -r)
+'''
+
+- In case you are not downloaded it, run these command. Try to reboot the os.
+
+'''bash
+sudo apt update
+sudo apt upgrade
+sudo apt install raspberrypi-kernel-headers
+'''
+
+- Git the code, after that create a Makefile in the same folder. Paste these code to it:
+
+'''bash
+obj-m += bmp180.o
+
+all:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+
+clean:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+'''
+
+- Run the command below to build the makefile:
+
+'''bash
+make
+'''
+
+- The following command use to load the bmp180 driver into linux kernel:
+
+'''bash
+sudo insmod bmp180_driver.ko
+dmesg | tail
+'''
+
+- After that, you can try to run it with your code
